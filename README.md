@@ -25,7 +25,7 @@ Before you begin setting up the project, please ensure you complete the followin
   
 5. **Project configuration**
    - It is also important to add the projects that are supposed to be analysed to the [data](data/) folder
-   - ![Example configuration](pictures/example.uml)
+   - ![Example configuration](pictures/example.png)
 
 ---
 
