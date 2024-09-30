@@ -1,0 +1,22 @@
+Sure, here is a sample PlantUML component diagram based on the provided information:
+
+```plantuml
+@startuml
+
+package "com.example.project" {
+  [CustomerService] 
+  [OrderService] 
+  [ProductService] 
+  [PaymentService] 
+}
+
+[CustomerService] --> [OrderService] : uses
+[OrderService] --> [ProductService] : uses
+[OrderService] --> [PaymentService] : uses
+
+@enduml
+```
+
+This diagram represents a simple Spring Boot project with four components: `CustomerService`, `OrderService`, `ProductService`, and `PaymentService`. The arrows represent dependencies between these components. For example, `CustomerService` uses `OrderService`, and `OrderService` uses both `ProductService` and `PaymentService`.
+
+Please note that this is a simplified representation. The actual dependencies and interactions between components in your project may be more complex.

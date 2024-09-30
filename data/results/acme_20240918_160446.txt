@@ -1,0 +1,558 @@
+```plantuml
+@startuml
+
+package com.acmeair.entities {
+  interface Flight
+  interface FlightSegment
+  interface Customer
+  interface CustomerAddress
+  interface Booking
+  interface CustomerSession
+  interface AirportCodeMapping
+  interface BookingPK
+  interface FlightPK
+}
+
+package com.acmeair.service {
+  interface FlightService
+  interface CustomerService
+  interface BookingService
+  interface DataService
+  interface KeyGenerator
+  interface ServiceLocator
+  interface TransactionService
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+  class RESTCookieSessionFilter
+  class AcmeAirApp
+  class AppConfig
+}
+
+package com.acmeair.web.dto {
+  class FlightSegmentInfo
+  class BookingReceiptInfo
+  class BookingInfo
+  class CustomerInfo
+  class TripFlightOptions
+  class TripLegInfo
+  class FlightPKInfo
+  class AddressInfo
+}
+
+package com.acmeair.morphia.entities {
+  class FlightImpl
+  class CustomerImpl
+  class CustomerSessionImpl
+  class AirportCodeMappingImpl
+  class BookingImpl
+  class FlightSegmentImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.morphia.services {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.morphia.services.util {
+  class MongoConnectionManager
+}
+
+package com.acmeair.wxs.entities {
+  class CustomerImpl
+  class CustomerSessionImpl
+  class FlightImpl
+  class FlightSegmentImpl
+  class BookingImpl
+  class BookingPKImpl
+  class FlightPKImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.wxs.service {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.wxs.utils {
+  class WXSSessionManager
+  class MapPutAllAgent
+}
+
+package com.acmeair.reporter.parser {
+  class ResultParser
+  class ResultParserHelper
+  class OverallResults
+  class MultipleChartResults
+  class IndividualChartResults
+}
+
+package com.acmeair.reporter.parser.component {
+  class JmeterSummariserParser
+  class JtlTotals
+  class NmonParser
+  class JmeterJTLParser
+}
+
+package com.acmeair.reporter.util {
+  class StatResult
+  class Messages
+}
+
+package com.acmeair.config {
+  class AcmeAirConfiguration
+  class LoaderREST
+}
+
+package com.acmeair.loader {
+  class CustomerLoader
+  class FlightLoader
+  class Loader
+}
+
+package com.acmeair.morphia {
+  class BigIntegerConverter
+  class BigDecimalConverter
+  class DatastoreFactory
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+  class RESTCookieSessionFilter
+  class AcmeAirApp
+  class AppConfig
+}
+
+package com.acmeair.web.dto {
+  class FlightSegmentInfo
+  class BookingReceiptInfo
+  class BookingInfo
+  class CustomerInfo
+  class TripFlightOptions
+  class TripLegInfo
+  class FlightPKInfo
+  class AddressInfo
+}
+
+package com.acmeair.morphia.entities {
+  class FlightImpl
+  class CustomerImpl
+  class CustomerSessionImpl
+  class AirportCodeMappingImpl
+  class BookingImpl
+  class FlightSegmentImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.morphia.services {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.morphia.services.util {
+  class MongoConnectionManager
+}
+
+package com.acmeair.wxs.entities {
+  class CustomerImpl
+  class CustomerSessionImpl
+  class FlightImpl
+  class FlightSegmentImpl
+  class BookingImpl
+  class BookingPKImpl
+  class FlightPKImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.wxs.service {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.wxs.utils {
+  class WXSSessionManager
+  class MapPutAllAgent
+}
+
+package com.acmeair.reporter.parser {
+  class ResultParser
+  class ResultParserHelper
+  class OverallResults
+  class MultipleChartResults
+  class IndividualChartResults
+}
+
+package com.acmeair.reporter.parser.component {
+  class JmeterSummariserParser
+  class JtlTotals
+  class NmonParser
+  class JmeterJTLParser
+}
+
+package com.acmeair.reporter.util {
+  class StatResult
+  class Messages
+}
+
+package com.acmeair.config {
+  class AcmeAirConfiguration
+  class LoaderREST
+}
+
+package com.acmeair.loader {
+  class CustomerLoader
+  class FlightLoader
+  class Loader
+}
+
+package com.acmeair.morphia {
+  class BigIntegerConverter
+  class BigDecimalConverter
+  class DatastoreFactory
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+  class RESTCookieSessionFilter
+  class AcmeAirApp
+  class AppConfig
+}
+
+package com.acmeair.web.dto {
+  class FlightSegmentInfo
+  class BookingReceiptInfo
+  class BookingInfo
+  class CustomerInfo
+  class TripFlightOptions
+  class TripLegInfo
+  class FlightPKInfo
+  class AddressInfo
+}
+
+package com.acmeair.morphia.entities {
+  class FlightImpl
+  class CustomerImpl
+  class CustomerSessionImpl
+  class AirportCodeMappingImpl
+  class BookingImpl
+  class FlightSegmentImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.morphia.services {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.morphia.services.util {
+  class MongoConnectionManager
+}
+
+package com.acmeair.wxs.entities {
+  class CustomerImpl
+  class CustomerSessionImpl
+  class FlightImpl
+  class FlightSegmentImpl
+  class BookingImpl
+  class BookingPKImpl
+  class FlightPKImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.wxs.service {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.wxs.utils {
+  class WXSSessionManager
+  class MapPutAllAgent
+}
+
+package com.acmeair.reporter.parser {
+  class ResultParser
+  class ResultParserHelper
+  class OverallResults
+  class MultipleChartResults
+  class IndividualChartResults
+}
+
+package com.acmeair.reporter.parser.component {
+  class JmeterSummariserParser
+  class JtlTotals
+  class NmonParser
+  class JmeterJTLParser
+}
+
+package com.acmeair.reporter.util {
+  class StatResult
+  class Messages
+}
+
+package com.acmeair.config {
+  class AcmeAirConfiguration
+  class LoaderREST
+}
+
+package com.acmeair.loader {
+  class CustomerLoader
+  class FlightLoader
+  class Loader
+}
+
+package com.acmeair.morphia {
+  class BigIntegerConverter
+  class BigDecimalConverter
+  class DatastoreFactory
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+  class RESTCookieSessionFilter
+  class AcmeAirApp
+  class AppConfig
+}
+
+package com.acmeair.web.dto {
+  class FlightSegmentInfo
+  class BookingReceiptInfo
+  class BookingInfo
+  class CustomerInfo
+  class TripFlightOptions
+  class TripLegInfo
+  class FlightPKInfo
+  class AddressInfo
+}
+
+package com.acmeair.morphia.entities {
+  class FlightImpl
+  class CustomerImpl
+  class CustomerSessionImpl
+  class AirportCodeMappingImpl
+  class BookingImpl
+  class FlightSegmentImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.morphia.services {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.morphia.services.util {
+  class MongoConnectionManager
+}
+
+package com.acmeair.wxs.entities {
+  class CustomerImpl
+  class CustomerSessionImpl
+  class FlightImpl
+  class FlightSegmentImpl
+  class BookingImpl
+  class BookingPKImpl
+  class FlightPKImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.wxs.service {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.wxs.utils {
+  class WXSSessionManager
+  class MapPutAllAgent
+}
+
+package com.acmeair.reporter.parser {
+  class ResultParser
+  class ResultParserHelper
+  class OverallResults
+  class MultipleChartResults
+  class IndividualChartResults
+}
+
+package com.acmeair.reporter.parser.component {
+  class JmeterSummariserParser
+  class JtlTotals
+  class NmonParser
+  class JmeterJTLParser
+}
+
+package com.acmeair.reporter.util {
+  class StatResult
+  class Messages
+}
+
+package com.acmeair.config {
+  class AcmeAirConfiguration
+  class LoaderREST
+}
+
+package com.acmeair.loader {
+  class CustomerLoader
+  class FlightLoader
+  class Loader
+}
+
+package com.acmeair.morphia {
+  class BigIntegerConverter
+  class BigDecimalConverter
+  class DatastoreFactory
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+  class RESTCookieSessionFilter
+  class AcmeAirApp
+  class AppConfig
+}
+
+package com.acmeair.web.dto {
+  class FlightSegmentInfo
+  class BookingReceiptInfo
+  class BookingInfo
+  class CustomerInfo
+  class TripFlightOptions
+  class TripLegInfo
+  class FlightPKInfo
+  class AddressInfo
+}
+
+package com.acmeair.morphia.entities {
+  class FlightImpl
+  class CustomerImpl
+  class CustomerSessionImpl
+  class AirportCodeMappingImpl
+  class BookingImpl
+  class FlightSegmentImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.morphia.services {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.morphia.services.util {
+  class MongoConnectionManager
+}
+
+package com.acmeair.wxs.entities {
+  class CustomerImpl
+  class CustomerSessionImpl
+  class FlightImpl
+  class FlightSegmentImpl
+  class BookingImpl
+  class BookingPKImpl
+  class FlightPKImpl
+  class CustomerAddressImpl
+}
+
+package com.acmeair.wxs.service {
+  class CustomerServiceImpl
+  class FlightServiceImpl
+  class BookingServiceImpl
+}
+
+package com.acmeair.wxs.utils {
+  class WXSSessionManager
+  class MapPutAllAgent
+}
+
+package com.acmeair.reporter.parser {
+  class ResultParser
+  class ResultParserHelper
+  class OverallResults
+  class MultipleChartResults
+  class IndividualChartResults
+}
+
+package com.acmeair.reporter.parser.component {
+  class JmeterSummariserParser
+  class JtlTotals
+  class NmonParser
+  class JmeterJTLParser
+}
+
+package com.acmeair.reporter.util {
+  class StatResult
+  class Messages
+}
+
+package com.acmeair.config {
+  class AcmeAirConfiguration
+  class LoaderREST
+}
+
+package com.acmeair.loader {
+  class CustomerLoader
+  class FlightLoader
+  class Loader
+}
+
+package com.acmeair.morphia {
+  class BigIntegerConverter
+  class BigDecimalConverter
+  class DatastoreFactory
+}
+
+package com.acmeair.web {
+  class FlightsREST
+  class CustomerREST
+  class BookingsREST
+  class LoginREST
+Prompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Try to aggregate the different components to bigger components if possible, so we end up with few main components.Also use Interfaces as communication points between components. Also Include the relations Requires and Provides for the interfaces and uses. 
+Only return the plant uml information without using additional descriptions.

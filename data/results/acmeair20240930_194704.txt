@@ -1,0 +1,176 @@
+```plantuml
+@startuml
+
+package "com.acmeair.morphia.entities" {
+  [FlightImpl] -[hidden]-> [Flight]
+  [FlightImpl] -[hidden]-> [Serializable]
+  [CustomerImpl] -[hidden]-> [Customer]
+  [CustomerImpl] -[hidden]-> [Serializable]
+  [AirportCodeMappingImpl] -[hidden]-> [AirportCodeMapping]
+  [AirportCodeMappingImpl] -[hidden]-> [Serializable]
+  [BookingImpl] -[hidden]-> [Booking]
+  [BookingImpl] -[hidden]-> [Serializable]
+  [CustomerSessionImpl] -[hidden]-> [CustomerSession]
+  [CustomerSessionImpl] -[hidden]-> [Serializable]
+  [FlightSegmentImpl] -[hidden]-> [FlightSegment]
+  [FlightSegmentImpl] -[hidden]-> [Serializable]
+  [CustomerAddressImpl] -[hidden]-> [CustomerAddress]
+  [CustomerAddressImpl] -[hidden]-> [Serializable]
+}
+
+package "com.acmeair.web" {
+  [FlightsREST]
+  [CustomerREST]
+  [BookingsREST]
+  [LoginREST]
+  [RESTCookieSessionFilter]
+  [AppConfig]
+  [AcmeAirApp]
+}
+
+package "com.acmeair.service" {
+  [ServiceLocator]
+  [CustomerService]
+  [FlightService]
+  [BookingService]
+  [TransactionService]
+  [KeyGenerator]
+}
+
+package "com.acmeair.morphia.services" {
+  [CustomerServiceImpl] -[hidden]-> [CustomerService]
+  [FlightServiceImpl] -[hidden]-> [FlightService]
+  [BookingServiceImpl] -[hidden]-> [BookingService]
+}
+
+package "com.acmeair.wxs.service" {
+  [CustomerServiceImpl] -[hidden]-> [CustomerService]
+  [FlightServiceImpl] -[hidden]-> [FlightService]
+  [BookingServiceImpl] -[hidden]-> [BookingService]
+}
+
+package "com.acmeair.loader" {
+  [CustomerLoader]
+  [FlightLoader]
+  [Loader]
+}
+
+package "com.acmeair.reporter.parser" {
+  [ResultParser]
+  [ResultParserHelper]
+  [OverallResults]
+  [MultipleChartResults]
+  [IndividualChartResults]
+}
+
+package "com.acmeair.reporter.parser.component" {
+  [JmeterSummariserParser] -[hidden]-> [ResultParser]
+  [JtlTotals]
+  [NmonParser] -[hidden]-> [ResultParser]
+  [JmeterJTLParser]
+}
+
+package "com.acmeair.web.dto" {
+  [FlightSegmentInfo]
+  [BookingReceiptInfo]
+  [BookingInfo]
+  [TripLegInfo]
+  [FlightPKInfo]
+  [CustomerInfo]
+  [FlightInfo]
+  [TripFlightOptions]
+  [AddressInfo]
+  [BookingPKInfo]
+}
+
+package "com.acmeair.config" {
+  [AcmeAirConfiguration]
+  [LoaderREST]
+}
+
+package "com.acmeair.morphia.services.util" {
+  [MongoConnectionManager]
+}
+
+package "com.acmeair.wxs.utils" {
+  [WXSSessionManager]
+  [MapPutAllAgent]
+}
+
+package "com.acmeair.morphia" {
+  [BigIntegerConverter]
+  [BigDecimalConverter]
+  [DatastoreFactory]
+}
+
+package "com.acmeair.reporter.util" {
+  [StatResult]
+  [Messages]
+}
+
+[FlightsREST] --> [FlightServiceImpl] : Uses
+[CustomerREST] --> [CustomerServiceImpl] : Uses
+[BookingsREST] --> [BookingServiceImpl] : Uses
+[LoginREST] --> [CustomerServiceImpl] : Uses
+[RESTCookieSessionFilter] --> [CustomerServiceImpl] : Uses
+[RESTCookieSessionFilter] --> [TransactionService] : Uses
+[AppConfig] --> [AcmeAirConfiguration] : Uses
+[AcmeAirApp] --> [FlightsREST] : Uses
+[AcmeAirApp] --> [CustomerREST] : Uses
+[AcmeAirApp] --> [BookingsREST] : Uses
+[AcmeAirApp] --> [LoginREST] : Uses
+
+[CustomerLoader] --> [CustomerServiceImpl] : Uses
+[FlightLoader] --> [FlightServiceImpl] : Uses
+[Loader] --> [CustomerLoader] : Uses
+[Loader] --> [FlightLoader] : Uses
+
+[CustomerServiceImpl] --> [MongoConnectionManager] : Uses
+[FlightServiceImpl] --> [MongoConnectionManager] : Uses
+[BookingServiceImpl] --> [MongoConnectionManager] : Uses
+
+[CustomerServiceImpl] --> [CustomerImpl] : Provides
+[FlightServiceImpl] --> [FlightImpl] : Provides
+[BookingServiceImpl] --> [BookingImpl] : Provides
+
+[CustomerServiceImpl] --> [CustomerAddressImpl] : Provides
+[FlightServiceImpl] --> [FlightSegmentImpl] : Provides
+[BookingServiceImpl] --> [BookingPKImpl] : Provides
+
+[CustomerServiceImpl] --> [ServiceLocator] : Requires
+[FlightServiceImpl] --> [ServiceLocator] : Requires
+[BookingServiceImpl] --> [ServiceLocator] : Requires
+
+[CustomerServiceImpl] --> [KeyGenerator] : Requires
+[FlightServiceImpl] --> [KeyGenerator] : Requires
+[BookingServiceImpl] --> [KeyGenerator] : Requires
+
+@enduml
+```Prompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Try to aggregate the different components to bigger components if possible, so we end up with few main components.Also use Interfaces as communication points between components. Also Include the relations Requires and Provides for the interfaces and uses. 
+Only return the plant uml information without using additional descriptions.

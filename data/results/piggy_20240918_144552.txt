@@ -1,0 +1,164 @@
+@startuml
+package "Auth Service" {
+  [UserController] ..> (UserService)
+  [User] ..|> (UserDetails)
+  [UserServiceImpl] ..> (UserService)
+  [MongoUserDetailsService] ..> (UserDetailsService)
+  [WebSecurityConfig] --|> [WebSecurityConfigurerAdapter]
+  [OAuth2AuthorizationConfig] --|> [AuthorizationServerConfigurerAdapter]
+  [AuthApplication]
+}
+
+package "Notification Service" {
+  [RecipientController] ..> (RecipientService)
+  [EmailServiceImpl] ..> (EmailService)
+  [RecipientServiceImpl] ..> (RecipientService)
+  [NotificationServiceImpl] ..> (NotificationService)
+  [NotificationServiceApplication]
+}
+
+package "Account Service" {
+  [AccountController] ..> (AccountService)
+  [AccountServiceImpl] ..> (AccountService)
+  [StatisticsServiceClientFallback] ..> (StatisticsServiceClient)
+  [ResourceServerConfig] --|> [ResourceServerConfigurerAdapter]
+  [AccountApplication]
+}
+
+package "Statistics Service" {
+  [StatisticsController] ..> (StatisticsService)
+  [StatisticsServiceImpl] ..> (StatisticsService)
+  [ExchangeRatesServiceImpl] ..> (ExchangeRatesService)
+  [ResourceServerConfig] --|> [ResourceServerConfigurerAdapter]
+  [StatisticsApplication]
+}
+
+package "Config Service" {
+  [ConfigApplication]
+  [SecurityConfig] --|> [WebSecurityConfigurerAdapter]
+}
+
+package "Registry Service" {
+  [RegistryApplication]
+}
+
+package "Gateway Service" {
+  [GatewayApplication]
+}
+
+package "Monitoring Service" {
+  [MonitoringApplication]
+}
+
+package "Turbine Stream Service" {
+  [TurbineStreamServiceApplication]
+}
+
+@endumlPrompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Also here is the content of the Docker-compose.yml of the whole project:version: '2.1'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - 15672:15672
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  config:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+
+  registry:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+
+  gateway:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+
+  auth-service:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+      NOTIFICATION_SERVICE_PASSWORD: $NOTIFICATION_SERVICE_PASSWORD
+      STATISTICS_SERVICE_PASSWORD: $STATISTICS_SERVICE_PASSWORD
+      ACCOUNT_SERVICE_PASSWORD: $ACCOUNT_SERVICE_PASSWORD
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+
+  auth-mongodb:
+    environment:
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+
+  account-service:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+      ACCOUNT_SERVICE_PASSWORD: $ACCOUNT_SERVICE_PASSWORD
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+
+  account-mongodb:
+    environment:
+      INIT_DUMP: account-service-dump.js
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+
+  statistics-service:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+      STATISTICS_SERVICE_PASSWORD: $STATISTICS_SERVICE_PASSWORD
+
+  statistics-mongodb:
+    environment:
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+
+  notification-service:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+      NOTIFICATION_SERVICE_PASSWORD: $NOTIFICATION_SERVICE_PASSWORD
+
+  notification-mongodb:
+    image: sqshq/piggymetrics-mongodb
+    restart: always
+    environment:
+      MONGODB_PASSWORD: $MONGODB_PASSWORD
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  monitoring:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+
+  turbine-stream-service:
+    environment:
+      CONFIG_SERVICE_PASSWORD: $CONFIG_SERVICE_PASSWORD
+Try to aggregate the different components to bigger components if possible, so we end up with few main components.Also use Interfaces as communication points between components. Also Include the relations Requires and Provides for the interfaces and uses. 
+Only return the plant uml information without using additional descriptions.

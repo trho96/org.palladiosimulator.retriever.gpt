@@ -1,0 +1,181 @@
+```plantuml
+@startuml
+
+package "com.acmeair.morphia.entities" {
+  [FlightImpl] -[hidden]-> [FlightSegment]
+  [FlightImpl] -[hidden]-> [Flight]
+  [FlightImpl] -[hidden]-> [Serializable]
+  [FlightImpl] -[hidden]-> [FlightSegmentImpl]
+  [FlightImpl] -[hidden]-> [CustomerImpl]
+  [FlightImpl] -[hidden]-> [CustomerAddressImpl]
+  [FlightImpl] -[hidden]-> [BookingImpl]
+  [FlightImpl] -[hidden]-> [BookingPKImpl]
+  [FlightImpl] -[hidden]-> [AirportCodeMappingImpl]
+  [FlightImpl] -[hidden]-> [CustomerSessionImpl]
+  [FlightImpl] -[hidden]-> [FlightPKImpl]
+}
+
+package "com.acmeair.web.dto" {
+  [FlightSegmentInfo]
+  [BookingReceiptInfo]
+  [BookingInfo]
+  [TripFlightOptions]
+  [TripLegInfo]
+  [FlightPKInfo]
+  [CustomerInfo]
+  [AddressInfo]
+}
+
+package "com.acmeair.morphia" {
+  [BigIntegerConverter]
+  [BigDecimalConverter]
+  [DatastoreFactory]
+}
+
+package "com.acmeair.web" {
+  [AcmeAirApp]
+  [FlightsREST]
+  [CustomerREST]
+  [BookingsREST]
+  [LoginREST]
+  [RESTCookieSessionFilter]
+  [AppConfig]
+}
+
+package "com.acmeair.service" {
+  [ServiceLocator]
+  [CustomerService]
+  [FlightService]
+  [BookingService]
+  [KeyGenerator]
+}
+
+package "com.acmeair.wxs.entities" {
+  [CustomerImpl]
+  [CustomerAddressImpl]
+  [CustomerSessionImpl]
+  [FlightImpl]
+  [FlightSegmentImpl]
+  [BookingImpl]
+  [BookingPKImpl]
+  [FlightPKImpl]
+}
+
+package "com.acmeair.reporter.parser" {
+  [ResultParser]
+  [ResultParserHelper]
+  [OverallResults]
+  [IndividualChartResults]
+  [MultipleChartResults]
+}
+
+package "com.acmeair.reporter.parser.component" {
+  [JmeterSummariserParser]
+  [NmonParser]
+  [JmeterJTLParser]
+  [JtlTotals]
+}
+
+package "com.acmeair.reporter.util" {
+  [StatResult]
+  [Messages]
+}
+
+package "com.acmeair.config" {
+  [AcmeAirConfiguration]
+  [LoaderREST]
+}
+
+package "com.acmeair.loader" {
+  [CustomerLoader]
+  [FlightLoader]
+  [Loader]
+}
+
+package "com.acmeair.morphia.services" {
+  [CustomerServiceImpl]
+  [FlightServiceImpl]
+  [BookingServiceImpl]
+}
+
+package "com.acmeair.wxs.service" {
+  [CustomerServiceImpl]
+  [FlightServiceImpl]
+  [BookingServiceImpl]
+}
+
+package "com.acmeair.wxs.utils" {
+  [WXSSessionManager]
+  [MapPutAllAgent]
+}
+
+package "com.acmeair.reporter" {
+  [ReportGenerator]
+}
+
+[FlightImpl] --> [FlightSegmentInfo]
+[FlightImpl] --> [BookingReceiptInfo]
+[FlightImpl] --> [BookingInfo]
+[FlightImpl] --> [TripFlightOptions]
+[FlightImpl] --> [TripLegInfo]
+[FlightImpl] --> [FlightPKInfo]
+[FlightImpl] --> [CustomerInfo]
+[FlightImpl] --> [AddressInfo]
+
+[CustomerImpl] --> [CustomerAddressImpl]
+[CustomerImpl] --> [CustomerSessionImpl]
+[CustomerImpl] --> [FlightImpl]
+[CustomerImpl] --> [FlightSegmentImpl]
+[CustomerImpl] --> [BookingImpl]
+[CustomerImpl] --> [BookingPKImpl]
+[CustomerImpl] --> [FlightPKImpl]
+
+[ServiceLocator] --> [CustomerService]
+[ServiceLocator] --> [FlightService]
+[ServiceLocator] --> [BookingService]
+[ServiceLocator] --> [KeyGenerator]
+
+[FlightsREST] --> [FlightService]
+[CustomerREST] --> [CustomerService]
+[BookingsREST] --> [BookingService]
+[LoginREST] --> [CustomerService]
+
+[CustomerServiceImpl] --> [CustomerService]
+[FlightServiceImpl] --> [FlightService]
+[BookingServiceImpl] --> [BookingService]
+
+[CustomerServiceImpl] --> [CustomerService]
+[FlightServiceImpl] --> [FlightService]
+[BookingServiceImpl] --> [BookingService]
+
+[WXSSessionManager] --> [TransactionService]
+
+@enduml
+```Prompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Try to aggregate the different components to bigger components if possible, so we end up with few main components.Also use Interfaces as communication points between components. Also Include the relations Requires and Provides for the interfaces and uses. 
+Only return the plant uml information without using additional descriptions.

@@ -1,0 +1,87 @@
+@startuml
+component [ExchangeRatesContainer] as ExchangeRatesContainer
+component [User] as User
+component [CustomConversionsConfig] as CustomConversionsConfig
+component [OAuth2AuthorizationConfig] as OAuth2AuthorizationConfig
+component [Account] as Account
+component [AuthApplication] as AuthApplication
+component [Saving] as Saving
+component [CustomUserInfoTokenServices] as CustomUserInfoTokenServices
+component [EmailServiceImpl] as EmailServiceImpl
+component [ResourceServerConfig] as ResourceServerConfig
+component [RegistryApplication] as RegistryApplication
+component [AccountApplication] as AccountApplication
+component [AccountServiceImpl] as AccountServiceImpl
+component [TurbineStreamServiceApplication] as TurbineStreamServiceApplication
+component [Recipient] as Recipient
+component [GatewayApplication] as GatewayApplication
+component [DataPointIdReaderConverter] as DataPointIdReaderConverter
+component [WebSecurityConfig] as WebSecurityConfig
+component [ResourceServerConfig] as ResourceServerConfig
+component [ExchangeRatesServiceImpl] as ExchangeRatesServiceImpl
+component [User] as User
+component [FrequencyReaderConverter] as FrequencyReaderConverter
+component [DataPoint] as DataPoint
+component [UserServiceImpl] as UserServiceImpl
+component [NotificationSettings] as NotificationSettings
+component [DataPointIdWriterConverter] as DataPointIdWriterConverter
+component [StatisticsApplication] as StatisticsApplication
+component [StatisticsController] as StatisticsController
+component [ErrorHandler] as ErrorHandler
+component [CustomUserInfoTokenServices] as CustomUserInfoTokenServices
+component [SecurityConfig] as SecurityConfig
+component [StatisticsServiceImpl] as StatisticsServiceImpl
+component [DataPointId] as DataPointId
+component [FrequencyWriterConverter] as FrequencyWriterConverter
+component [ConfigApplication] as ConfigApplication
+component [NotificationServiceImpl] as NotificationServiceImpl
+component [ResourceServerConfig] as ResourceServerConfig
+component [RecipientServiceImpl] as RecipientServiceImpl
+component [Account] as Account
+component [Item] as Item
+component [ExchangeRatesClientFallback] as ExchangeRatesClientFallback
+component [AccountController] as AccountController
+component [ItemMetric] as ItemMetric
+component [StatisticsServiceClientFallback] as StatisticsServiceClientFallback
+component [CustomConversionsConfig] as CustomConversionsConfig
+component [MonitoringApplication] as MonitoringApplication
+component [MongoUserDetailsService] as MongoUserDetailsService
+component [Item] as Item
+component [ExchangeRatesClient] as ExchangeRatesClient
+component [AccountController] as AccountController
+component [ItemMetric] as ItemMetric
+component [RecipientController] as RecipientController
+component [Saving] as Saving
+component [RecipientController] as RecipientController
+component [UserController] as UserController
+component [NotificationServiceApplication] as NotificationServiceApplication
+
+User --> CustomConversionsConfig
+OAuth2AuthorizationConfig --> Account
+AuthApplication --> Saving
+CustomUserInfoTokenServices --> EmailServiceImpl
+ResourceServerConfig --> RegistryApplication
+AccountApplication --> AccountServiceImpl
+TurbineStreamServiceApplication --> Recipient
+GatewayApplication --> DataPointIdReaderConverter
+WebSecurityConfig --> ResourceServerConfig
+ExchangeRatesServiceImpl --> User
+FrequencyReaderConverter --> DataPoint
+UserServiceImpl --> NotificationSettings
+DataPointIdWriterConverter --> StatisticsApplication
+StatisticsController --> ErrorHandler
+CustomUserInfoTokenServices --> SecurityConfig
+StatisticsServiceImpl --> DataPointId
+FrequencyWriterConverter --> ConfigApplication
+NotificationServiceImpl --> ResourceServerConfig
+RecipientServiceImpl --> Account
+Account --> Item
+ExchangeRatesClientFallback --> AccountController
+ItemMetric --> StatisticsServiceClientFallback
+CustomConversionsConfig --> MonitoringApplication
+MongoUserDetailsService --> Item
+ExchangeRatesClient --> AccountController
+ItemMetric --> RecipientController
+Saving --> RecipientController
+UserController --> NotificationServiceApplication
+@enduml

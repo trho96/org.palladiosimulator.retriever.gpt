@@ -1,0 +1,1716 @@
+```plantuml
+@startuml
+
+package "com.acmeair.morphia.entities" {
+  [FlightImpl] -down-> [FlightSegment]
+  [CustomerImpl] -down-> [CustomerAddress]
+  [CustomerSessionImpl]
+  [BookingImpl] -down-> [Customer]
+  [BookingImpl] -down-> [Flight]
+  [AirportCodeMappingImpl]
+  [FlightSegmentImpl]
+  [CustomerAddressImpl]
+}
+
+package "com.acmeair.web" {
+  [AcmeAirApp] -down-> [FlightsREST]
+  [FlightsREST] -down-> [FlightService]
+  [CustomerREST] -down-> [CustomerService]
+  [BookingsREST] -down-> [BookingService]
+  [LoginREST] -down-> [CustomerService]
+  [RESTCookieSessionFilter] -down-> [CustomerService]
+  [RESTCookieSessionFilter] -down-> [TransactionService]
+}
+
+package "com.acmeair.service" {
+  [ServiceLocator] -down-> [CustomerService]
+  [ServiceLocator] -down-> [FlightService]
+  [ServiceLocator] -down-> [BookingService]
+  [FlightService]
+  [CustomerService]
+  [BookingService]
+  [KeyGenerator]
+}
+
+package "com.acmeair.morphia.services" {
+  [CustomerServiceImpl] -down-> [CustomerService]
+  [FlightServiceImpl] -down-> [FlightService]
+  [BookingServiceImpl] -down-> [BookingService]
+  [MongoConnectionManager]
+}
+
+package "com.acmeair.wxs.service" {
+  [CustomerServiceImpl] -down-> [CustomerService]
+  [FlightServiceImpl] -down-> [FlightService]
+  [BookingServiceImpl] -down-> [BookingService]
+  [WXSSessionManager]
+}
+
+package "com.acmeair.web.dto" {
+  [FlightSegmentInfo]
+  [TripFlightOptions]
+  [TripLegInfo]
+  [BookingInfo]
+  [BookingReceiptInfo]
+  [FlightPKInfo]
+  [CustomerInfo]
+  [AddressInfo]
+}
+
+package "com.acmeair.reporter.parser" {
+  [ResultParser]
+  [ResultParserHelper]
+  [IndividualChartResults]
+  [MultipleChartResults]
+  [OverallResults]
+}
+
+package "com.acmeair.reporter.parser.component" {
+  [JmeterSummariserParser] -down-> [ResultParser]
+  [JmeterJTLParser]
+  [NmonParser]
+  [JtlTotals]
+}
+
+package "com.acmeair.loader" {
+  [CustomerLoader] -down-> [CustomerService]
+  [FlightLoader] -down-> [FlightService]
+  [Loader]
+}
+
+package "com.acmeair.config" {
+  [AcmeAirConfiguration] -down-> [BookingService]
+  [AcmeAirConfiguration] -down-> [CustomerService]
+  [AcmeAirConfiguration] -down-> [FlightService]
+  [LoaderREST]
+}
+
+package "com.acmeair.reporter.util" {
+  [StatResult]
+  [Messages]
+}
+
+package "com.acmeair.morphia" {
+  [BigIntegerConverter]
+  [BigDecimalConverter]
+  [DatastoreFactory]
+}
+
+package "com.acmeair.wxs.entities" {
+  [CustomerImpl] -down-> [CustomerAddress]
+  [CustomerSessionImpl]
+  [BookingImpl] -down-> [Customer]
+  [BookingImpl] -down-> [Flight]
+  [FlightImpl] -down-> [FlightSegment]
+  [FlightSegmentImpl]
+  [CustomerAddressImpl]
+}
+
+package "com.acmeair.wxs.utils" {
+  [MapPutAllAgent]
+}
+
+package "com.acmeair.web.dto" {
+  [FlightInfo]
+}
+
+interface FlightService {
+  +getFlightByFlightId(): Flight
+  +getFlightByAirportsAndDepartureDate(): List<Flight>
+  +getFlightByAirports(): List<Flight>
+  +storeAirportMapping(AirportCodeMapping mapping): void
+  +createAirportCodeMapping(): AirportCodeMapping
+  +createNewFlight(): Flight
+  +storeFlightSegment(FlightSegment flightSeg): void
+  +storeFlightSegment(): void
+  +countFlightSegments(): Long
+  +countFlights(): Long
+  +countAirports(): Long
+}
+
+interface CustomerService {
+  +createCustomer(MemberShipStatus status, PhoneType phoneNumberType, CustomerAddress address): Customer
+  +createAddress(): CustomerAddress
+  +updateCustomer(Customer customer): Customer
+  +getCustomerByUsername(): Customer
+  +validateCustomer(): boolean
+  +getCustomerByUsernameAndPassword(): Customer
+  +validateSession(): CustomerSession
+  +createSession(): CustomerSession
+  +invalidateSession(): void
+  +count(): Long
+  +countSessions(): Long
+}
+
+interface BookingService {
+  +bookFlight(FlightPKImpl flightId): BookingPKImpl
+  +bookFlight(): String
+  +getBooking(): Booking
+  +cancelBooking(): void
+  +getBookingsByUser(): List<Booking>
+  +count(): Long
+}
+
+interface TransactionService {
+  +prepareForTransaction(): void
+}
+
+@enduml
+```Prompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Try to aggregate the different components to bigger components if possible, so we end up with few main components.Also use Interfaces as communication points between components. Also Include the relations Requires and Provides for the interfaces and uses. 
+Only return the plant uml information without using additional descriptions.
+extracted Features:Class:FlightImpl
+implements:Flight, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="flight"), public
+imports:import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: String@Id, private
+Field:flightSegmentId: Stringprivate
+Field:scheduledDepartureTime: Dateprivate
+Field:scheduledArrivalTime: Dateprivate
+Field:firstClassBaseCost: BigDecimalprivate
+Field:economyClassBaseCost: BigDecimalprivate
+Field:numFirstClassSeats: intprivate
+Field:numEconomyClassSeats: intprivate
+Field:airplaneTypeId: Stringprivate
+Field:flightSegment: FlightSegmentprivate
+Method:FlightImpl(): void
+Method:FlightImpl(): void
+Method:getFlightId(): String
+Method:setFlightId(): void
+Method:getFlightSegmentId(): String
+Method:setFlightSegmentId(): void
+Method:getScheduledDepartureTime(): Date
+Method:setScheduledDepartureTime(): void
+Method:getScheduledArrivalTime(): Date
+Method:setScheduledArrivalTime(): void
+Method:getFirstClassBaseCost(): BigDecimal
+Method:setFirstClassBaseCost(): void
+Method:getEconomyClassBaseCost(): BigDecimal
+Method:setEconomyClassBaseCost(): void
+Method:getNumFirstClassSeats(): int
+Method:setNumFirstClassSeats(): void
+Method:getNumEconomyClassSeats(): int
+Method:setNumEconomyClassSeats(): void
+Method:getAirplaneTypeId(): String
+Method:setAirplaneTypeId(): void
+Method:getFlightSegment(): FlightSegment
+Method:setFlightSegment(FlightSegment flightSegment): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:FlightSegmentInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:public
+imports:import com.acmeair.entities.FlightSegment;
+
+Field:_id: Stringprivate
+Field:originPort: Stringprivate
+Field:destPort: Stringprivate
+Field:miles: intprivate
+Method:FlightSegmentInfo(): void
+Method:FlightSegmentInfo(FlightSegment flightSegment): void
+Method:get_id(): String
+Method:set_id(): void
+Method:getOriginPort(): String
+Method:setOriginPort(): void
+Method:getDestPort(): String
+Method:setDestPort(): void
+Method:getMiles(): int
+Method:setMiles(): void
+
+Class:BigIntegerConverter
+extends:TypeConverter
+implements:SimpleValueConverter
+Package:package com.acmeair.morphia;
+
+Modifiers:public
+imports:
+Method:BigIntegerConverter(): void
+Method:encode(Object value, MappedField optionalExtraInfo): Object
+Method:decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo): Object
+
+Class:AcmeAirApp
+extends:Application
+Package:package com.acmeair.web;
+
+Modifiers:@ApplicationPath("/rest/api"), public
+imports:
+Method:getClasses(): Set<Class<?>>
+
+Class:CustomerImpl
+implements:Customer, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="customer"), public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.CustomerAddress;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:password: Stringprivate
+Field:status: MemberShipStatusprivate
+Field:total_miles: intprivate
+Field:miles_ytd: intprivate
+Field:address: CustomerAddressprivate
+Field:phoneNumber: Stringprivate
+Field:phoneNumberType: PhoneTypeprivate
+Method:CustomerImpl(): void
+Method:CustomerImpl(MemberShipStatus status, CustomerAddress address, PhoneType phoneNumberType): void
+Method:getCustomerId(): String
+Method:getUsername(): String
+Method:setUsername(): void
+Method:getPassword(): String
+Method:setPassword(): void
+Method:getStatus(): MemberShipStatus
+Method:setStatus(MemberShipStatus status): void
+Method:getTotal_miles(): int
+Method:setTotal_miles(): void
+Method:getMiles_ytd(): int
+Method:setMiles_ytd(): void
+Method:getPhoneNumber(): String
+Method:setPhoneNumber(): void
+Method:getPhoneNumberType(): PhoneType
+Method:setPhoneNumberType(PhoneType phoneNumberType): void
+Method:getAddress(): CustomerAddress
+Method:setAddress(CustomerAddress address): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:ServiceLocator
+Package:package com.acmeair.service;
+
+Modifiers:public
+imports:
+Field:REPOSITORY_LOOKUP_KEY="com.acmeair.repository.type": Stringpublic, static
+Field:serviceType: Stringprivate, static
+Field:logger=Logger.getLogger(ServiceLocator.class.getName()): Loggerprivate, static
+Field:singletonServiceLocator=new AtomicReference<ServiceLocator>(): AtomicReference<ServiceLocator>private, static
+Field:beanManager: BeanManager@Inject
+Method:instance(): ServiceLocator
+Method:updateService(): void
+Method:getService(Class<T> clazz): T
+Method:getServices(): Map<String,String>
+Method:getServiceType(): String
+
+Class:CustomerSessionImpl
+implements:CustomerSession, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.CustomerSession;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:customerid: Stringprivate
+Field:lastAccessedTime: Dateprivate
+Field:timeoutTime: Dateprivate
+Method:CustomerSessionImpl(): void
+Method:CustomerSessionImpl(): void
+Method:getId(): String
+Method:setId(): void
+Method:getCustomerid(): String
+Method:setCustomerid(): void
+Method:getLastAccessedTime(): Date
+Method:setLastAccessedTime(): void
+Method:getTimeoutTime(): Date
+Method:setTimeoutTime(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:ResultParser
+Package:package com.acmeair.reporter.parser;
+
+Modifiers:public, abstract
+imports:import com.acmeair.reporter.parser.component.NmonParser;
+
+Field:multipleChartResults=new MultipleChartResults(): MultipleChartResultsprotected
+Field:overallResults=new OverallResults(): OverallResultsprotected
+Method:getMultipleChartResults(): MultipleChartResults
+Method:processDirectory(): void
+Method:generateChartStrings(): String
+Method:generateDefaultChartSettings(LineChart chart): String
+Method:generateMultipleLinesCharString(List<IndividualChartResults> list): String
+Method:getAllInputList(): ArrayList<Double>
+Method:getAllTimeList(): ArrayList<String>
+Method:getCharStrings(): ArrayList<String>
+Method:getFileName(): String
+Method:setFileName(): void
+Method:getResults(): ArrayList<IndividualChartResults>
+Method:processData(): double
+Method:processMultiLineData(): double
+Method:getMultipleChartTitle(): String
+Method:setMultipleYAxisLabel(): void
+Method:setMultipleChartTitle(): void
+Method:getMultipleYAxisLabel(): String
+
+Class:AirportCodeMappingImpl
+implements:AirportCodeMapping, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="airportCodeMapping"), public
+imports:import com.acmeair.entities.AirportCodeMapping;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:airportName: Stringprivate
+Method:AirportCodeMappingImpl(): void
+Method:AirportCodeMappingImpl(): void
+Method:getAirportCode(): String
+Method:setAirportCode(): void
+Method:getAirportName(): String
+Method:setAirportName(): void
+
+Class:BookingImpl
+implements:Booking, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Flight;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:pkey: BookingPKImplprivate
+Field:flightKey: FlightPKImplprivate
+Field:dateOfBooking: Dateprivate
+Field:customer: Customerprivate
+Field:flight: Flightprivate
+Method:BookingImpl(): void
+Method:BookingImpl(Customer customer, Flight flight): void
+Method:BookingImpl(Customer customer, FlightImpl flight): void
+Method:getPkey(): BookingPKImpl
+Method:getCustomerId(): String
+Method:setPkey(BookingPKImpl pkey): void
+Method:getFlightKey(): FlightPKImpl
+Method:setFlightKey(FlightPKImpl flightKey): void
+Method:setFlight(Flight flight): void
+Method:getDateOfBooking(): Date
+Method:setDateOfBooking(): void
+Method:getCustomer(): Customer
+Method:setCustomer(Customer customer): void
+Method:getFlight(): Flight
+Method:toString(): String
+Method:equals(Object obj): boolean
+Method:getBookingId(): String
+Method:getFlightId(): String
+
+Class:BookingPKImpl
+implements:BookingPK, Serializable, PartitionableKey
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.BookingPK;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:id: Stringprivate
+Field:customerId: Stringprivate
+Method:BookingPKImpl(): void
+Method:BookingPKImpl(): void
+Method:getId(): String
+Method:setId(): void
+Method:getCustomerId(): String
+Method:setCustomerId(): void
+Method:ibmGetPartition(): Object
+Method:hashCode(): int
+Method:equals(Object obj): boolean
+Method:toString(): String
+
+Class:FlightsREST
+Package:package com.acmeair.web;
+
+Modifiers:@Path("/flights"), public
+imports:import com.acmeair.entities.Flight;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.ServiceLocator;
+, import com.acmeair.web.dto.TripFlightOptions;
+, import com.acmeair.web.dto.TripLegInfo;
+
+Field:flightService=ServiceLocator.instance().getService(FlightService.class): FlightServiceprivate
+Method:getTripFlights(): TripFlightOptions
+Method:browseFlights(): TripFlightOptions
+
+Class:ResultParserHelper
+Package:package com.acmeair.reporter.parser;
+
+Modifiers:public
+imports:
+Method:getColor(): Color
+Method:scaleDown(): ArrayList<E>
+Method:scaleInputsData(): double
+
+Class:AirportCodeMappingImpl
+implements:AirportCodeMapping, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.AirportCodeMapping;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:airportName: Stringprivate
+Method:AirportCodeMappingImpl(): void
+Method:AirportCodeMappingImpl(): void
+Method:getAirportCode(): String
+Method:setAirportCode(): void
+Method:getAirportName(): String
+Method:setAirportName(): void
+
+Class:BigDecimalConverter
+extends:TypeConverter
+implements:SimpleValueConverter
+Package:package com.acmeair.morphia;
+
+Modifiers:public
+imports:
+Method:BigDecimalConverter(): void
+Method:encode(Object value, MappedField optionalExtraInfo): Object
+Method:decode(Class targetClass, Object fromDBObject, MappedField optionalExtraInfo): Object
+
+Class:CustomerLoader
+Package:package com.acmeair.loader;
+
+Modifiers:public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.CustomerAddress;
+, import com.acmeair.entities.Customer.PhoneType;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.ServiceLocator;
+
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Method:loadCustomers(long numCustomers): void
+
+Class:StatResult
+Package:package com.acmeair.reporter.util;
+
+Modifiers:public
+imports:
+Field:min: doublepublic
+Field:max: doublepublic
+Field:average: doublepublic
+Field:count: intpublic
+Field:sum: doublepublic
+Field:numberOfResults: doublepublic
+Method:getMin(): double
+Method:setMin(): void
+Method:getMax(): double
+Method:setMax(): void
+Method:getAverage(): double
+Method:setAverage(): void
+Method:getCount(): int
+Method:setCount(): void
+Method:getSum(): double
+Method:setSum(): void
+Method:getNumberOfResults(): double
+Method:setNumberOfResults(): void
+Method:getStatistics(): StatResult
+
+Class:BookingReceiptInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:public
+imports:
+Field:departBookingId: Stringprivate
+Field:returnBookingId: Stringprivate
+Field:oneWay: booleanprivate
+Method:BookingReceiptInfo(): void
+Method:BookingReceiptInfo(): void
+Method:getDepartBookingId(): String
+Method:setDepartBookingId(): void
+Method:getReturnBookingId(): String
+Method:setReturnBookingId(): void
+Method:isOneWay(): boolean
+Method:setOneWay(): void
+Method:toString(): String
+
+Class:CustomerREST
+Package:package com.acmeair.web;
+
+Modifiers:@Path("/customer"), public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.CustomerAddress;
+, import com.acmeair.service.*;
+, import com.acmeair.web.dto.*;
+
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Field:request: HttpServletRequest@Context, private
+Method:getCustomer(): Response
+Method:putCustomer(CustomerInfo customer): Response
+
+Class:BookingInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement(name="Booking"), public
+imports:import com.acmeair.entities.Booking;
+
+Field:bookingId: String@XmlElement(name="bookingId"), private
+Field:flightId: String@XmlElement(name="flightId"), private
+Field:customerId: String@XmlElement(name="customerId"), private
+Field:dateOfBooking: Date@XmlElement(name="dateOfBooking"), private
+Field:pkey: BookingPKInfo@XmlElement(name="pkey"), private
+Method:BookingInfo(): void
+Method:BookingInfo(Booking booking): void
+Method:getBookingId(): String
+Method:setBookingId(): void
+Method:getFlightId(): String
+Method:setFlightId(): void
+Method:getCustomerId(): String
+Method:setCustomerId(): void
+Method:getDateOfBooking(): Date
+Method:setDateOfBooking(): void
+Method:getPkey(): BookingPKInfo
+
+Class:JmeterSummariserParser
+extends:ResultParser
+Package:package com.acmeair.reporter.parser.component;
+
+Modifiers:public
+imports:import com.acmeair.reporter.parser.IndividualChartResults;
+, import com.acmeair.reporter.parser.ResultParser;
+, import com.acmeair.reporter.parser.ResultParserHelper;
+
+Field:SKIP_JMETER_DROPOUTS=false: booleanprivate, static
+Field:jmeterFileName="AcmeAir1-9.log": Stringprivate
+Field:testDate="": Stringprivate
+Method:getFileName(): String
+Method:setFileName(): void
+Method:getTestDate(): String
+
+Class:JtlTotals
+Package:package com.acmeair.reporter.parser.component;
+
+Modifiers:public
+imports:
+Field:DECIMAL_PATTERN="#,##0.0##": Stringprivate, static, final
+Field:MILLIS_PER_SECOND=1000.0: doubleprivate, static, final
+Field:millisPerBucket=500: intprivate, static
+Field:files=0: intprivate
+Field:request_count=0: intprivate
+Field:time_sum=0: intprivate
+Field:time_max=0: intprivate
+Field:time_min=Integer.MAX_VALUE: intprivate
+Field:failures=0: intprivate
+Field:timestamp_start=Long.MAX_VALUE: longprivate
+Field:timestamp_end=0: longprivate
+Field:rcMap=new HashMap<String,Integer>(): Map<String,Integer>private
+Field:millisMap=new TreeMap<Integer,Integer>(): Map<Integer,Integer>private
+Field:threadMap=new HashMap<String,Integer>(): Map<String,Integer>private
+Field:timeList=new ArrayList<Integer>(): ArrayList<Integer>private
+Field:flight_to_sum=0: longprivate
+Field:flight_to_count=0: longprivate
+Field:flight_to_empty_count=0: intprivate
+Field:flight_ret_count=0: longprivate
+Field:one_way_count=0: longprivate
+Method:JtlTotals(): void
+Method:add(JtlTotals totals): void
+Method:getFlightToCount(): long
+Method:addTime(): void
+Method:getMillisMap(): Map<Integer,Integer>
+Method:addReturnCode(): void
+Method:setThreadMap(): void
+Method:addTimestamp(long timestamp): void
+Method:incrementFailures(): void
+Method:addToFlight(): void
+Method:addFlightRetCount(): void
+Method:incrementOneWayCount(): void
+Method:incrementFiles(): void
+Method:getFilesCount(): int
+Method:getCount(): int
+Method:getThreadMap(): Map<String,Integer>
+Method:getAverageResponseTime(): int
+Method:getMaxResponseTime(): int
+Method:getMinResponseTime(): int
+Method:getFailures(): int
+Method:get90thPrecentile(): int
+Method:getReturnCodeCounts(): Map<String,Integer>
+Method:getElapsedTimeInSeconds(): long
+Method:getRequestsPerSecond(): long
+Method:getFlightToSum(): long
+Method:getEmptyToFlightCount(): long
+Method:getAverageToFlights(): float
+Method:getFlightRetCount(): long
+Method:getOneWayCount(): long
+Method:setResponseTimeStepping(): void
+Method:getResponseTimeStepping(): int
+Method:cntByTimeString(): String
+Method:cntByTime(): HashMap<String,Integer>
+
+Class:OverallResults
+Package:package com.acmeair.reporter.parser;
+
+Modifiers:public
+imports:
+Field:allInputList=new ArrayList<Double>(): ArrayList<Double>private
+Field:allTimeList=new ArrayList<String>(): ArrayList<String>private
+Field:scale_max: doubleprivate
+Field:overallScale_max: doubleprivate
+Method:getAllInputList(): ArrayList<Double>
+Method:setAllInputList(): void
+Method:getAllTimeList(): ArrayList<String>
+Method:setAllTimeList(): void
+Method:getOverallScale_max(): double
+Method:setOverallScale_max(): void
+Method:getScale_max(): double
+Method:setScale_max(): void
+
+Class:TripLegInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:public
+imports:import com.acmeair.entities.Flight;
+
+Field:DEFAULT_PAGE_SIZE=10: intpublic, static
+Field:hasMoreOptions: booleanprivate
+Field:numPages: intprivate
+Field:pageSize: intprivate
+Field:currentPage: intprivate
+Field:flightsOptions: List<FlightInfo>private
+Method:isHasMoreOptions(): boolean
+Method:setHasMoreOptions(): void
+Method:getNumPages(): int
+Method:setNumPages(): void
+Method:getPageSize(): int
+Method:setPageSize(): void
+Method:getCurrentPage(): int
+Method:setCurrentPage(): void
+Method:getFlightsOptions(): List<FlightInfo>
+Method:setFlightsOptions(List<Flight> flightsOptions): void
+
+Class:FlightPKInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:public
+imports:
+Field:id: Stringprivate
+Field:flightSegmentId: Stringprivate
+Method:FlightPKInfo(): void
+Method:FlightPKInfo(): void
+Method:getId(): String
+Method:setId(): void
+Method:getFlightSegmentId(): String
+Method:setFlightSegmentId(): void
+
+Class:CustomerImpl
+implements:Customer, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.CustomerAddress;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:password: Stringprivate
+Field:status: MemberShipStatusprivate
+Field:total_miles: intprivate
+Field:miles_ytd: intprivate
+Field:address: CustomerAddressprivate
+Field:phoneNumber: Stringprivate
+Field:phoneNumberType: PhoneTypeprivate
+Method:CustomerImpl(): void
+Method:CustomerImpl(MemberShipStatus status, CustomerAddress address, PhoneType phoneNumberType): void
+Method:getCustomerId(): String
+Method:getUsername(): String
+Method:setUsername(): void
+Method:getPassword(): String
+Method:setPassword(): void
+Method:getStatus(): MemberShipStatus
+Method:setStatus(MemberShipStatus status): void
+Method:getTotal_miles(): int
+Method:setTotal_miles(): void
+Method:getMiles_ytd(): int
+Method:setMiles_ytd(): void
+Method:getPhoneNumber(): String
+Method:setPhoneNumber(): void
+Method:getPhoneNumberType(): PhoneType
+Method:setPhoneNumberType(PhoneType phoneNumberType): void
+Method:getAddress(): CustomerAddress
+Method:setAddress(CustomerAddress address): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:ReportGenerator
+Package:package com.acmeair.reporter;
+
+Modifiers:public
+imports:import com.acmeair.reporter.util.Messages;
+, import com.acmeair.reporter.util.StatResult;
+, import com.acmeair.reporter.parser.IndividualChartResults;
+, import com.acmeair.reporter.parser.ResultParser;
+, import com.acmeair.reporter.parser.ResultParserHelper;
+, import com.acmeair.reporter.parser.component.JmeterJTLParser;
+, import com.acmeair.reporter.parser.component.JmeterSummariserParser;
+, import com.acmeair.reporter.parser.component.JtlTotals;
+, import com.acmeair.reporter.parser.component.NmonParser;
+
+Field:max_lines=15: intprivate, static, final
+Field:RESULTS_FILE=Messages.getString("ReportGenerator.RESULT_FILE_NAME"): Stringprivate, static, final
+Field:searchingLocation=Messages.getString("inputDirectory"): Stringprivate, static
+Field:jmeterFileName=Messages.getString("ReportGenerator.DEFAULT_JMETER_FILENAME"): Stringprivate, static
+Field:nmonFileName=Messages.getString("ReportGenerator.DEFAULT_NMON_FILE_NAME"): Stringprivate, static
+Field:BOOK_FLIGHT="BookFlight": Stringprivate, static, final
+Field:CANCEL_BOOKING="Cancel Booking": Stringprivate, static, final
+Field:LOGIN="Login": Stringprivate, static, final
+Field:LOGOUT="logout": Stringprivate, static, final
+Field:LIST_BOOKINGS="List Bookings": Stringprivate, static, final
+Field:QUERY_FLIGHT="QueryFlight": Stringprivate, static, final
+Field:UPDATE_CUSTOMER="Update Customer": Stringprivate, static, final
+Field:VIEW_PROFILE="View Profile Information": Stringprivate, static, final
+Field:charMap=new LinkedHashMap<String,ArrayList<String>>(): LinkedHashMap<String,ArrayList<String>>private
+Method:main(): void
+Method:process(): void
+
+Class:IndividualChartResults
+Package:package com.acmeair.reporter.parser;
+
+Modifiers:public
+imports:
+Field:inputList=new ArrayList<Double>(): ArrayList<Double>private
+Field:title: Stringprivate
+Field:timeList=new ArrayList<String>(): ArrayList<String>private
+Field:files=0: intprivate
+Method:setTitle(): void
+Method:getInputList(): ArrayList<Double>
+Method:setInputList(): void
+Method:getTimeList(): ArrayList<String>
+Method:setTimeList(): void
+Method:getTitle(): String
+Method:incrementFiles(): void
+Method:getFilesCount(): int
+
+Class:AddressInfo
+implements:Serializable
+Package:package com.acmeair.web.dto;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement(name="CustomerAddress"), public
+imports:import com.acmeair.entities.CustomerAddress;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:streetAddress1: Stringprivate
+Field:streetAddress2: Stringprivate
+Field:city: Stringprivate
+Field:stateProvince: Stringprivate
+Field:country: Stringprivate
+Field:postalCode: Stringprivate
+Method:AddressInfo(): void
+Method:AddressInfo(): void
+Method:AddressInfo(CustomerAddress address): void
+Method:getStreetAddress1(): String
+Method:setStreetAddress1(): void
+Method:getStreetAddress2(): String
+Method:setStreetAddress2(): void
+Method:getCity(): String
+Method:setCity(): void
+Method:getStateProvince(): String
+Method:setStateProvince(): void
+Method:getCountry(): String
+Method:setCountry(): void
+Method:getPostalCode(): String
+Method:setPostalCode(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:MongoConnectionManager
+implements:MorphiaConstants
+Package:package com.acmeair.morphia.services.util;
+
+Modifiers:public
+imports:import com.acmeair.morphia.BigDecimalConverter;
+, import com.acmeair.morphia.MorphiaConstants;
+
+Field:connectionManager=new AtomicReference<MongoConnectionManager>(): AtomicReference<MongoConnectionManager>private, static
+Field:logger=Logger.getLogger(MongoConnectionManager.class.getName()): Loggerprivate, final, static
+Field:db: DB@Resource(name=JNDI_NAME), protected
+Field:datastore: Datastoreprivate, static
+Method:getConnectionManager(): MongoConnectionManager
+Method:getDB(): DB
+Method:getDatastore(): Datastore
+Method:getDriverVersion(): String
+Method:getMongoVersion(): String
+
+Class:CustomerServiceImpl
+extends:CustomerService
+implements:MorphiaConstants
+Package:package com.acmeair.morphia.services;
+
+Modifiers:@DataService(name=MorphiaConstants.KEY,description=MorphiaConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Customer.MemberShipStatus;
+, import com.acmeair.entities.Customer.PhoneType;
+, import com.acmeair.entities.CustomerAddress;
+, import com.acmeair.entities.CustomerSession;
+, import com.acmeair.morphia.entities.CustomerAddressImpl;
+, import com.acmeair.morphia.entities.CustomerSessionImpl;
+, import com.acmeair.morphia.MorphiaConstants;
+, import com.acmeair.morphia.entities.CustomerImpl;
+, import com.acmeair.morphia.services.util.MongoConnectionManager;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.CustomerService;
+
+Field:datastore: Datastoreprotected
+Method:initialization(): void
+Method:count(): Long
+Method:countSessions(): Long
+Method:createCustomer(MemberShipStatus status, PhoneType phoneNumberType, CustomerAddress address): Customer
+Method:createAddress(): CustomerAddress
+Method:updateCustomer(Customer customer): Customer
+Method:getCustomerByUsername(): Customer
+Method:invalidateSession(): void
+
+Class:RESTCookieSessionFilter
+implements:Filter
+Package:package com.acmeair.web;
+
+Modifiers:public
+imports:import com.acmeair.entities.CustomerSession;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.ServiceLocator;
+, import com.acmeair.service.TransactionService;
+
+Field:LOGIN_USER="acmeair.login_user": Stringstatic, final
+Field:LOGIN_PATH="/rest/api/login": Stringprivate, static, final
+Field:LOGOUT_PATH="/rest/api/login/logout": Stringprivate, static, final
+Field:LOADDB_PATH="/rest/api/loaddb": Stringprivate, static, final
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Field:transactionService=ServiceLocator.instance().getService(TransactionService.class): TransactionServiceprivate
+Field:beanManager: BeanManager@Inject
+Method:destroy(): void
+Method:doFilter(ServletRequest req, ServletResponse resp, FilterChain chain): void
+Method:init(FilterConfig config): void
+
+Class:DatastoreFactory
+Package:package com.acmeair.morphia;
+
+Modifiers:public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+
+Field:mongourl=null: Stringprivate, static
+Method:getDatastore(Datastore ds): Datastore
+
+Class:CustomerAddressImpl
+implements:CustomerAddress, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement, public
+imports:import com.acmeair.entities.CustomerAddress;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:streetAddress1: Stringprivate
+Field:streetAddress2: Stringprivate
+Field:city: Stringprivate
+Field:stateProvince: Stringprivate
+Field:country: Stringprivate
+Field:postalCode: Stringprivate
+Method:CustomerAddressImpl(): void
+Method:CustomerAddressImpl(): void
+Method:getStreetAddress1(): String
+Method:setStreetAddress1(): void
+Method:getStreetAddress2(): String
+Method:setStreetAddress2(): void
+Method:getCity(): String
+Method:setCity(): void
+Method:getStateProvince(): String
+Method:setStateProvince(): void
+Method:getCountry(): String
+Method:setCountry(): void
+Method:getPostalCode(): String
+Method:setPostalCode(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:CustomerServiceImpl
+extends:CustomerService
+implements:WXSConstants
+Package:package com.acmeair.wxs.service;
+
+Modifiers:@Default, @DataService(name=WXSConstants.KEY,description=WXSConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Customer.MemberShipStatus;
+, import com.acmeair.entities.Customer.PhoneType;
+, import com.acmeair.entities.CustomerAddress;
+, import com.acmeair.entities.CustomerSession;
+, import com.acmeair.service.BookingService;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.KeyGenerator;
+, import com.acmeair.wxs.WXSConstants;
+, import com.acmeair.wxs.entities.CustomerAddressImpl;
+, import com.acmeair.wxs.entities.CustomerImpl;
+, import com.acmeair.wxs.entities.CustomerSessionImpl;
+, import com.acmeair.wxs.utils.WXSSessionManager;
+
+Field:BASE_CUSTOMER_MAP_NAME="Customer": Stringprivate, static
+Field:BASE_CUSTOMER_SESSION_MAP_NAME="CustomerSession": Stringprivate, static
+Field:CUSTOMER_MAP_NAME="Customer": Stringprivate, static
+Field:CUSTOMER_SESSION_MAP_NAME="CustomerSession": Stringprivate, static
+Field:logger=Logger.getLogger(BookingService.class.getName()): Loggerprivate, final, static
+Field:og: ObjectGridprivate
+Field:keyGenerator: KeyGenerator@Inject
+Method:count(): Long
+Method:countSessions(): Long
+Method:createCustomer(MemberShipStatus status, PhoneType phoneNumberType, CustomerAddress address): Customer
+Method:createAddress(): CustomerAddress
+Method:updateCustomer(Customer customer): Customer
+Method:invalidateSession(): void
+
+Class:FlightPKImpl
+implements:FlightPK, Serializable, PartitionableKey
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.FlightPK;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:id: Stringprivate
+Field:flightSegmentId: Stringprivate
+Method:FlightPKImpl(): void
+Method:FlightPKImpl(): void
+Method:getId(): String
+Method:setId(): void
+Method:getFlightSegmentId(): String
+Method:setFlightSegmentId(): void
+Method:ibmGetPartition(): Object
+Method:hashCode(): int
+Method:equals(Object obj): boolean
+Method:toString(): String
+
+Class:FlightServiceImpl
+extends:FlightService
+implements:WXSConstants
+Package:package com.acmeair.wxs.service;
+
+Modifiers:@DataService(name=WXSConstants.KEY,description=WXSConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.AirportCodeMapping;
+, import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+, import com.acmeair.service.BookingService;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.KeyGenerator;
+, import com.acmeair.wxs.WXSConstants;
+, import com.acmeair.wxs.entities.AirportCodeMappingImpl;
+, import com.acmeair.wxs.entities.FlightImpl;
+, import com.acmeair.wxs.entities.FlightSegmentImpl;
+, import com.acmeair.wxs.utils.WXSSessionManager;
+
+Field:FLIGHT_MAP_NAME="Flight": Stringprivate, static
+Field:FLIGHT_SEGMENT_MAP_NAME="FlightSegment": Stringprivate, static
+Field:AIRPORT_CODE_MAPPING_MAP_NAME="AirportCodeMapping": Stringprivate, static
+Field:BASE_FLIGHT_MAP_NAME="Flight": Stringprivate, static
+Field:BASE_FLIGHT_SEGMENT_MAP_NAME="FlightSegment": Stringprivate, static
+Field:BASE_AIRPORT_CODE_MAPPING_MAP_NAME="AirportCodeMapping": Stringprivate, static
+Field:logger=Logger.getLogger(BookingService.class.getName()): Loggerprivate, final, static
+Field:og: ObjectGridprivate
+Field:keyGenerator: KeyGenerator@Inject
+Method:countFlights(): Long
+Method:countAirports(): Long
+Method:countFlightSegments(): Long
+Method:storeAirportMapping(AirportCodeMapping mapping): void
+Method:createAirportCodeMapping(): AirportCodeMapping
+Method:createNewFlight(): Flight
+Method:storeFlightSegment(FlightSegment flightSeg): void
+Method:storeFlightSegment(): void
+
+Class:FlightSegmentImpl
+implements:FlightSegment, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="flightSegment"), public
+imports:import com.acmeair.entities.FlightSegment;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:originPort: Stringprivate
+Field:destPort: Stringprivate
+Field:miles: intprivate
+Method:FlightSegmentImpl(): void
+Method:FlightSegmentImpl(): void
+Method:getFlightName(): String
+Method:setFlightName(): void
+Method:getOriginPort(): String
+Method:setOriginPort(): void
+Method:getDestPort(): String
+Method:setDestPort(): void
+Method:getMiles(): int
+Method:setMiles(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:MapPutAllAgent
+implements:MapGridAgent
+Package:package com.acmeair.wxs.utils;
+
+Modifiers:public
+imports:
+Field:serialVersionUID=1L: longprivate, static, final
+Field:logger=Logger.getLogger(MapPutAllAgent.class.getName()): Loggerprivate, static, final
+Field:objectsToSave=null: HashMap<Object,HashMap<Object,Object>>private
+Method:getObjectsToSave(): HashMap<Object,HashMap<Object,Object>>
+Method:setObjectsToSave(HashMap<Object,HashMap<Object,Object>> objectsToSave): void
+Method:process(Session arg0, ObjectMap arg1, Object arg2): Object
+Method:processAllEntries(Session arg0, ObjectMap arg1): Map<Object,Object>
+
+Class:BookingServiceImpl
+implements:BookingService, MorphiaConstants
+Package:package com.acmeair.morphia.services;
+
+Modifiers:@DataService(name=MorphiaConstants.KEY,description=MorphiaConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Flight;
+, import com.acmeair.morphia.MorphiaConstants;
+, import com.acmeair.morphia.entities.BookingImpl;
+, import com.acmeair.morphia.services.util.MongoConnectionManager;
+, import com.acmeair.service.BookingService;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.KeyGenerator;
+, import com.acmeair.service.ServiceLocator;
+
+Field:datastore: Datastore
+Field:keyGenerator: KeyGenerator@Inject
+Field:flightService=ServiceLocator.instance().getService(FlightService.class): FlightServiceprivate
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Method:initialization(): void
+Method:bookFlight(): String
+Method:bookFlight(): String
+Method:getBooking(): Booking
+Method:getBookingsByUser(): List<Booking>
+Method:cancelBooking(): void
+Method:count(): Long
+
+Class:TripFlightOptions
+Package:package com.acmeair.web.dto;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement, public
+imports:
+Field:tripLegs: intprivate
+Field:tripFlights: List<TripLegInfo>private
+Method:getTripLegs(): int
+Method:setTripLegs(): void
+Method:getTripFlights(): List<TripLegInfo>
+Method:setTripFlights(List<TripLegInfo> tripFlights): void
+
+Class:BookingsREST
+Package:package com.acmeair.web;
+
+Modifiers:@Path("/bookings"), public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.service.BookingService;
+, import com.acmeair.service.ServiceLocator;
+, import com.acmeair.web.dto.BookingInfo;
+, import com.acmeair.web.dto.BookingReceiptInfo;
+
+Field:bs=ServiceLocator.instance().getService(BookingService.class): BookingServiceprivate
+Method:bookFlights(): Response
+Method:getBookingByNumber(): BookingInfo
+Method:getBookingsByUser(): List<BookingInfo>
+Method:cancelBookingsByNumber(): Response
+
+Class:Loader
+Package:package com.acmeair.loader;
+
+Modifiers:public
+imports:
+Field:REPOSITORY_LOOKUP_KEY="com.acmeair.repository.type": Stringpublic, static
+Field:logger=Logger.getLogger(Loader.class.getName()): Loggerprivate, static
+Method:queryLoader(): String
+Method:loadDB(long numCustomers): String
+Method:main(): void
+
+Class:BookingImpl
+implements:Booking, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="booking"), public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Flight;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: String@Id, private
+Field:flightId: Stringprivate
+Field:customerId: Stringprivate
+Field:dateOfBooking: Dateprivate
+Method:BookingImpl(): void
+Method:BookingImpl(): void
+Method:BookingImpl(Customer customer, Flight flight): void
+Method:getBookingId(): String
+Method:setBookingId(): void
+Method:getFlightId(): String
+Method:setFlightId(): void
+Method:getDateOfBooking(): Date
+Method:setDateOfBooking(): void
+Method:getCustomerId(): String
+Method:setCustomer(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:CustomerInfo
+implements:Serializable
+Package:package com.acmeair.web.dto;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement(name="Customer"), public
+imports:import com.acmeair.entities.Customer;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: String@XmlElement(name="_id"), private
+Field:password: String@XmlElement(name="password"), private
+Field:status: String@XmlElement(name="status"), private
+Field:total_miles: int@XmlElement(name="total_miles"), private
+Field:miles_ytd: int@XmlElement(name="miles_ytd"), private
+Field:address: AddressInfo@XmlElement(name="address"), private
+Field:phoneNumber: String@XmlElement(name="phoneNumber"), private
+Field:phoneNumberType: String@XmlElement(name="phoneNumberType"), private
+Method:CustomerInfo(): void
+Method:CustomerInfo(AddressInfo address): void
+Method:CustomerInfo(Customer c): void
+Method:getUsername(): String
+Method:setUsername(): void
+Method:getPassword(): String
+Method:setPassword(): void
+Method:getStatus(): String
+Method:setStatus(): void
+Method:getTotal_miles(): int
+Method:setTotal_miles(): void
+Method:getMiles_ytd(): int
+Method:setMiles_ytd(): void
+Method:getPhoneNumber(): String
+Method:setPhoneNumber(): void
+Method:getPhoneNumberType(): String
+Method:setPhoneNumberType(): void
+Method:getAddress(): AddressInfo
+Method:setAddress(AddressInfo address): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:FlightImpl
+implements:Flight, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:pkey: FlightPKImplprivate
+Field:scheduledDepartureTime: Dateprivate
+Field:scheduledArrivalTime: Dateprivate
+Field:firstClassBaseCost: BigDecimalprivate
+Field:economyClassBaseCost: BigDecimalprivate
+Field:numFirstClassSeats: intprivate
+Field:numEconomyClassSeats: intprivate
+Field:airplaneTypeId: Stringprivate
+Field:flightSegment: FlightSegmentprivate
+Method:FlightImpl(): void
+Method:FlightImpl(): void
+Method:getPkey(): FlightPKImpl
+Method:setPkey(FlightPKImpl pkey): void
+Method:getFlightId(): String
+Method:setFlightId(): void
+Method:getFlightSegmentId(): String
+Method:getScheduledDepartureTime(): Date
+Method:setScheduledDepartureTime(): void
+Method:getScheduledArrivalTime(): Date
+Method:setScheduledArrivalTime(): void
+Method:getFirstClassBaseCost(): BigDecimal
+Method:setFirstClassBaseCost(): void
+Method:getEconomyClassBaseCost(): BigDecimal
+Method:setEconomyClassBaseCost(): void
+Method:getNumFirstClassSeats(): int
+Method:setNumFirstClassSeats(): void
+Method:getNumEconomyClassSeats(): int
+Method:setNumEconomyClassSeats(): void
+Method:getAirplaneTypeId(): String
+Method:setAirplaneTypeId(): void
+Method:getFlightSegment(): FlightSegment
+Method:setFlightSegment(FlightSegment flightSegment): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:KeyGenerator
+Package:package com.acmeair.service;
+
+Modifiers:public
+imports:
+Method:generate(): Object
+
+Class:FlightLoader
+Package:package com.acmeair.loader;
+
+Modifiers:public
+imports:import com.acmeair.entities.AirportCodeMapping;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.ServiceLocator;
+
+Field:MAX_FLIGHTS_PER_SEGMENT=30: intprivate, static, final
+Field:flightService=ServiceLocator.instance().getService(FlightService.class): FlightServiceprivate
+Method:loadFlights(): void
+
+Class:FlightSegmentImpl
+implements:FlightSegment, Serializable
+Package:package com.acmeair.wxs.entities;
+
+Modifiers:public
+imports:import com.acmeair.entities.FlightSegment;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:originPort: Stringprivate
+Field:destPort: Stringprivate
+Field:miles: intprivate
+Method:FlightSegmentImpl(): void
+Method:FlightSegmentImpl(): void
+Method:getFlightName(): String
+Method:setFlightName(): void
+Method:getOriginPort(): String
+Method:setOriginPort(): void
+Method:getDestPort(): String
+Method:setDestPort(): void
+Method:getMiles(): int
+Method:setMiles(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:JmeterJTLParser
+Package:package com.acmeair.reporter.parser.component;
+
+Modifiers:public
+imports:import com.acmeair.reporter.util.Messages;
+
+Field:jmeterJTLFileName="AcmeAir1-9.jtl": Stringprivate
+Field:regEx="<httpSample\\s*" + "t=\"(^\"*)\"\\s*" + "lt=\"(^\"*)\"\\s*"+ "ts=\"(^\"*)\"\\s*"+ "s=\"(^\"*)\"\\s*"+ "lb=\"(^\"*)\"\\s*"+ "rc=\"(^\"*)\"\\s*"+ "rm=\"(^\"*)\"\\s*"+ "tn=\"(^\"*)\"\\s*"+ "dt=\"(^\"*)\"\\s*"+ "by=\"(^\"*)\"\\s*"+ "FLIGHTTOCOUNT=\"(^\"*)\"\\s*"+ "FLIGHTRETCOUNT=\"(^\"*)\"\\s*"+ "ONEWAY\\s*=\"(^\"*)\"\\s*": Stringprivate
+Field:GROUP_T=1: intprivate
+Field:GROUP_TS=3: intprivate
+Field:GROUP_S=4: intprivate
+Field:GROUP_LB=5: intprivate
+Field:GROUP_RC=6: intprivate
+Field:GROUP_TN=8: intprivate
+Field:GROUP_FLIGHTTOCOUNT=11: intprivate
+Field:GROUP_FLIGHTRETCOUNT=12: intprivate
+Field:GROUP_ONEWAY=13: intprivate
+Field:totalAll: JtlTotalsprivate
+Field:totalUrlMap: Map<String,JtlTotals>private
+Method:JmeterJTLParser(): void
+Method:setLogFileName(): void
+Method:processResultsDirectory(): void
+Method:parse(File jmeterJTLfile): void
+Method:getResults(): JtlTotals
+Method:getResultsByUrl(): Map<String,JtlTotals>
+
+Class:LoginREST
+Package:package com.acmeair.web;
+
+Modifiers:@Path("/login"), public
+imports:import com.acmeair.entities.CustomerSession;
+, import com.acmeair.service.*;
+
+Field:SESSIONID_COOKIE_NAME="sessionid": Stringpublic, static
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Method:login(): Response
+Method:logout(): Response
+
+Class:BookingPKInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:public
+imports:
+Field:id: String@XmlElement(name="id"), private
+Field:customerId: String@XmlElement(name="customerId"), private
+Method:BookingPKInfo(): void
+Method:BookingPKInfo(): void
+Method:getId(): String
+Method:setId(): void
+Method:getCustomerId(): String
+Method:setCustomerId(): void
+
+Class:AcmeAirConfiguration
+Package:package com.acmeair.config;
+
+Modifiers:@Path("/config"), public
+imports:import com.acmeair.service.BookingService;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.ServiceLocator;
+
+Field:beanManager: BeanManager@Inject
+Field:logger=Logger.getLogger(AcmeAirConfiguration.class.getName()): Logger
+Field:bs=ServiceLocator.instance().getService(BookingService.class): BookingServiceprivate
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Field:flightService=ServiceLocator.instance().getService(FlightService.class): FlightServiceprivate
+Method:AcmeAirConfiguration(): void
+Method:getDataServiceInfo(): ArrayList<ServiceData>
+Method:getActiveDataServiceInfo(): Response
+Method:getRuntimeInfo(): ArrayList<ServiceData>
+Method:countBookings(): Response
+Method:countCustomer(): Response
+Method:countCustomerSessions(): Response
+Method:countFlights(): Response
+Method:countFlightSegments(): Response
+Method:countAirports(): Response
+
+Class:FlightServiceImpl
+extends:FlightService
+implements:MorphiaConstants
+Package:package com.acmeair.morphia.services;
+
+Modifiers:@DataService(name=MorphiaConstants.KEY,description=MorphiaConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.AirportCodeMapping;
+, import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+, import com.acmeair.morphia.MorphiaConstants;
+, import com.acmeair.morphia.entities.AirportCodeMappingImpl;
+, import com.acmeair.morphia.entities.FlightImpl;
+, import com.acmeair.morphia.entities.FlightSegmentImpl;
+, import com.acmeair.morphia.services.util.MongoConnectionManager;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.KeyGenerator;
+
+Field:datastore: Datastore
+Field:keyGenerator: KeyGenerator@Inject
+Method:initialization(): void
+Method:countFlights(): Long
+Method:countFlightSegments(): Long
+Method:countAirports(): Long
+Method:storeAirportMapping(AirportCodeMapping mapping): void
+Method:createAirportCodeMapping(): AirportCodeMapping
+Method:createNewFlight(): Flight
+Method:storeFlightSegment(FlightSegment flightSeg): void
+Method:storeFlightSegment(): void
+
+Class:AppConfig
+extends:Application
+Package:package com.acmeair.web;
+
+Modifiers:@ApplicationPath("/rest/info"), public
+imports:import com.acmeair.config.AcmeAirConfiguration;
+, import com.acmeair.config.LoaderREST;
+
+Method:getClasses(): Set<Class<?>>
+
+Class:MultipleChartResults
+Package:package com.acmeair.reporter.parser;
+
+Modifiers:public
+imports:
+Field:multipleChartTitle: Stringprivate
+Field:multipleChartYAxisLabel: Stringprivate
+Field:results=new ArrayList<IndividualChartResults>(): ArrayList<IndividualChartResults>private
+Field:charStrings=new ArrayList<String>(): ArrayList<String>private
+Method:getMultipleChartTitle(): String
+Method:setMultipleChartTitle(): void
+Method:getMultipleChartYAxisLabel(): String
+Method:setMultipleChartYAxisLabel(): void
+Method:getResults(): ArrayList<IndividualChartResults>
+Method:setResults(): void
+Method:getCharStrings(): ArrayList<String>
+Method:setCharStrings(): void
+
+Class:BookingServiceImpl
+implements:BookingService, WXSConstants
+Package:package com.acmeair.wxs.service;
+
+Modifiers:@DataService(name=WXSConstants.KEY,description=WXSConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.entities.Booking;
+, import com.acmeair.entities.Customer;
+, import com.acmeair.entities.Flight;
+, import com.acmeair.service.BookingService;
+, import com.acmeair.service.CustomerService;
+, import com.acmeair.service.DataService;
+, import com.acmeair.service.FlightService;
+, import com.acmeair.service.KeyGenerator;
+, import com.acmeair.service.ServiceLocator;
+, import com.acmeair.wxs.WXSConstants;
+, import com.acmeair.wxs.entities.BookingImpl;
+, import com.acmeair.wxs.entities.BookingPKImpl;
+, import com.acmeair.wxs.entities.FlightPKImpl;
+, import com.acmeair.wxs.utils.WXSSessionManager;
+
+Field:logger=Logger.getLogger(BookingService.class.getName()): Loggerprivate, final, static
+Field:BOOKING_MAP_NAME="Booking": Stringprivate, static
+Field:BASE_BOOKING_MAP_NAME="Booking": Stringprivate, static
+Field:og: ObjectGridprivate
+Field:keyGenerator: KeyGenerator@Inject, private
+Field:flightService=ServiceLocator.instance().getService(FlightService.class): FlightServiceprivate
+Field:customerService=ServiceLocator.instance().getService(CustomerService.class): CustomerServiceprivate
+Method:bookFlight(FlightPKImpl flightId): BookingPKImpl
+Method:bookFlight(): String
+Method:getBooking(): Booking
+Method:cancelBooking(): void
+Method:getBookingsByUser(): List<Booking>
+Method:count(): Long
+
+Class:FlightService
+Package:package com.acmeair.service;
+
+Modifiers:public, abstract
+imports:import com.acmeair.entities.Flight;
+, import com.acmeair.entities.FlightSegment;
+, import com.acmeair.entities.AirportCodeMapping;
+
+Field:logger=Logger.getLogger(FlightService.class.getName()): Loggerprotected
+Field:originAndDestPortToSegmentCache=new ConcurrentHashMap<String,FlightSegment>(): ConcurrentHashMap<String,FlightSegment>protected, static
+Field:flightSegmentAndDataToFlightCache=new ConcurrentHashMap<String,List<Flight>>(): ConcurrentHashMap<String,List<Flight>>protected, static
+Field:flightPKtoFlightCache=new ConcurrentHashMap<String,Flight>(): ConcurrentHashMap<String,Flight>protected, static
+Method:getFlightByFlightId(): Flight
+Method:getFlightByAirportsAndDepartureDate(): List<Flight>
+Method:getFlightByAirports(): List<Flight>
+Method:storeAirportMapping(AirportCodeMapping mapping): void
+Method:createAirportCodeMapping(): AirportCodeMapping
+Method:createNewFlight(): Flight
+Method:storeFlightSegment(FlightSegment flightSeg): void
+Method:storeFlightSegment(): void
+Method:countFlightSegments(): Long
+Method:countFlights(): Long
+Method:countAirports(): Long
+
+Class:CustomerService
+Package:package com.acmeair.service;
+
+Modifiers:public, abstract
+imports:import com.acmeair.entities.Customer;
+, import com.acmeair.entities.CustomerAddress;
+, import com.acmeair.entities.Customer.MemberShipStatus;
+, import com.acmeair.entities.Customer.PhoneType;
+, import com.acmeair.entities.CustomerSession;
+
+Field:DAYS_TO_ALLOW_SESSION=1: intprotected, static, final
+Field:keyGenerator: KeyGenerator@Inject, protected
+Method:createCustomer(MemberShipStatus status, PhoneType phoneNumberType, CustomerAddress address): Customer
+Method:createAddress(): CustomerAddress
+Method:updateCustomer(Customer customer): Customer
+Method:getCustomerByUsername(): Customer
+Method:validateCustomer(): boolean
+Method:getCustomerByUsernameAndPassword(): Customer
+Method:validateSession(): CustomerSession
+Method:createSession(): CustomerSession
+Method:invalidateSession(): void
+Method:count(): Long
+Method:countSessions(): Long
+
+Class:FlightInfo
+Package:package com.acmeair.web.dto;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement(name="Flight"), public
+imports:import com.acmeair.entities.Flight;
+
+Field:_id: String@XmlElement(name="_id"), private
+Field:flightSegmentId: Stringprivate
+Field:scheduledDepartureTime: Dateprivate
+Field:scheduledArrivalTime: Dateprivate
+Field:firstClassBaseCost: BigDecimalprivate
+Field:economyClassBaseCost: BigDecimalprivate
+Field:numFirstClassSeats: intprivate
+Field:numEconomyClassSeats: intprivate
+Field:airplaneTypeId: Stringprivate
+Field:flightSegment: FlightSegmentInfoprivate
+Field:pkey: FlightPKInfo@XmlElement(name="pkey"), private
+Method:FlightInfo(): void
+Method:FlightInfo(Flight flight): void
+Method:get_id(): String
+Method:set_id(): void
+Method:getFlightSegmentId(): String
+Method:setFlightSegmentId(): void
+Method:getScheduledDepartureTime(): Date
+Method:setScheduledDepartureTime(): void
+Method:getScheduledArrivalTime(): Date
+Method:setScheduledArrivalTime(): void
+Method:getFirstClassBaseCost(): BigDecimal
+Method:setFirstClassBaseCost(): void
+Method:getEconomyClassBaseCost(): BigDecimal
+Method:setEconomyClassBaseCost(): void
+Method:getNumFirstClassSeats(): int
+Method:setNumFirstClassSeats(): void
+Method:getNumEconomyClassSeats(): int
+Method:setNumEconomyClassSeats(): void
+Method:getAirplaneTypeId(): String
+Method:setAirplaneTypeId(): void
+Method:getFlightSegment(): FlightSegmentInfo
+Method:setFlightSegment(FlightSegmentInfo flightSegment): void
+Method:getPkey(): FlightPKInfo
+
+Class:NmonParser
+extends:ResultParser
+Package:package com.acmeair.reporter.parser.component;
+
+Modifiers:public
+imports:import com.acmeair.reporter.parser.IndividualChartResults;
+, import com.acmeair.reporter.parser.ResultParser;
+, import com.acmeair.reporter.parser.ResultParserHelper;
+
+Field:nmonFileName="output.nmon": Stringprivate
+Method:NmonParser(): void
+Method:getFileName(): String
+Method:setFileName(): void
+
+Class:Messages
+Package:package com.acmeair.reporter.util;
+
+Modifiers:public
+imports:
+Field:RESOURCE_BUNDLE: ResourceBundlestatic
+Field:config: CompositeConfigurationstatic
+Method:getString(): String
+Method:getConfiguration(): Configuration
+
+Class:LoaderREST
+Package:package com.acmeair.config;
+
+Modifiers:@Path("/loader"), public
+imports:import com.acmeair.loader.Loader;
+
+Field:loader: Loader@Inject, private
+Method:queryLoader(): Response
+Method:loadDB(@DefaultValue("-1") @QueryParam("numCustomers") long numCustomers): Response
+
+Class:CustomerSessionImpl
+implements:CustomerSession, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@Entity(value="customerSession"), public
+imports:import com.acmeair.entities.CustomerSession;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:_id: Stringprivate
+Field:customerid: Stringprivate
+Field:lastAccessedTime: Dateprivate
+Field:timeoutTime: Dateprivate
+Method:CustomerSessionImpl(): void
+Method:CustomerSessionImpl(): void
+Method:getId(): String
+Method:setId(): void
+Method:getCustomerid(): String
+Method:setCustomerid(): void
+Method:getLastAccessedTime(): Date
+Method:setLastAccessedTime(): void
+Method:getTimeoutTime(): Date
+Method:setTimeoutTime(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:WXSSessionManager
+implements:TransactionService, WXSConstants
+Package:package com.acmeair.wxs.utils;
+
+Modifiers:@DataService(name=WXSConstants.KEY,description=WXSConstants.KEY_DESCRIPTION), public
+imports:import com.acmeair.service.DataService;
+, import com.acmeair.service.TransactionService;
+, import com.acmeair.wxs.WXSConstants;
+
+Field:GRID_CONNECT_LOOKUP_KEY="com.acmeair.service.wxs.gridConnect": Stringprivate, static, final
+Field:GRID_NAME_LOOKUP_KEY="com.acmeair.service.wxs.gridName": Stringprivate, static, final
+Field:GRID_DISABLE_NEAR_CACHE_NAME_LOOKUP_KEY="com.acmeair.service.wxs.disableNearCacheName": Stringprivate, static, final
+Field:GRID_PARTITION_FIELD_NAME_LOOKUP_KEY="com.acmeair.service.wxs.partitionFieldName": Stringprivate, static, final
+Field:logger=Logger.getLogger(WXSSessionManager.class.getName()): Loggerprivate, static, final
+Field:SPLIT_COMMA="\\s*,\\s*": Stringprivate, static, final
+Field:SPLIT_COLON="\\s*:\\s*": Stringprivate, static, final
+Field:gridConnectString: Stringprivate
+Field:gridUsername=null: Stringprivate
+Field:gridPassword=null: Stringprivate
+Field:gridName="Grid": Stringprivate
+Field:integrateWithWASTransactions=false: booleanprivate
+Field:disableNearCacheNameString: Stringprivate
+Field:disableNearCacheNames=null: Stringprivate
+Field:partitionFieldNameString: Stringprivate
+Field:partitionFieldNames=null: HashMap<String,String>private
+Field:txManager: SpringLocalTxManagerprivate
+Field:mapSuffix="": Stringprivate
+Field:sharedGrid=new AtomicReference<ObjectGrid>(): AtomicReference<ObjectGrid>private
+Field:connectionManager=new AtomicReference<WXSSessionManager>(): AtomicReference<WXSSessionManager>private, static
+Method:getSessionManager(): WXSSessionManager
+Method:getMapSuffix(): String
+Method:setMapSuffix(): void
+Method:getGridConnectString(): String
+Method:setGridConnectString(): void
+Method:getGridName(): String
+Method:setGridName(): void
+Method:getGridUsername(): String
+Method:setGridUsername(): void
+Method:getGridPassword(): String
+Method:setGridPassword(): void
+Method:isIntegrateWithWASTransactions(): boolean
+Method:setIntegrateWithWASTransactions(): void
+Method:getDisableNearCacheNameString(): String
+Method:setDisableNearCacheNameString(): void
+Method:getPartitionFieldNameString(): String
+Method:setPartitionFieldNameString(): void
+Method:getPartitionFieldName(): String
+Method:getTxManager(): SpringLocalTxManager
+Method:setTxManager(SpringLocalTxManager txManager): void
+Method:prepareForTransaction(): void
+Method:getObjectGrid(): ObjectGrid
+Method:getObjectGridSession(): Session
+Method:getBackingMap(): BackingMap
+
+Class:CustomerAddressImpl
+implements:CustomerAddress, Serializable
+Package:package com.acmeair.morphia.entities;
+
+Modifiers:@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER), @XmlRootElement, public
+imports:import com.acmeair.entities.CustomerAddress;
+
+Field:serialVersionUID=1L: longprivate, static, final
+Field:streetAddress1: Stringprivate
+Field:streetAddress2: Stringprivate
+Field:city: Stringprivate
+Field:stateProvince: Stringprivate
+Field:country: Stringprivate
+Field:postalCode: Stringprivate
+Method:CustomerAddressImpl(): void
+Method:CustomerAddressImpl(): void
+Method:getStreetAddress1(): String
+Method:setStreetAddress1(): void
+Method:getStreetAddress2(): String
+Method:setStreetAddress2(): void
+Method:getCity(): String
+Method:setCity(): void
+Method:getStateProvince(): String
+Method:setStateProvince(): void
+Method:getCountry(): String
+Method:setCountry(): void
+Method:getPostalCode(): String
+Method:setPostalCode(): void
+Method:toString(): String
+Method:equals(Object obj): boolean
+
+Class:ServiceData
+Package:Unknown Package
+Modifiers:
+imports:
+Field:name="": Stringpublic
+Field:description="": Stringpublic
+

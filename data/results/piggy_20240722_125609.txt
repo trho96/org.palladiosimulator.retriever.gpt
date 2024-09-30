@@ -1,0 +1,191 @@
+@startuml
+package "com.piggymetrics.statistics.domain" {
+  [ExchangeRatesContainer]
+  [Account]
+  [Saving]
+  [Item]
+}
+
+package "com.piggymetrics.auth.domain" {
+  [User]
+}
+
+package "com.piggymetrics.auth.config" {
+  [OAuth2AuthorizationConfig]
+  [WebSecurityConfig]
+}
+
+package "com.piggymetrics.auth" {
+  [AuthApplication]
+}
+
+package "com.piggymetrics.auth.service" {
+  [UserServiceImpl]
+}
+
+package "com.piggymetrics.auth.service.security" {
+  [MongoUserDetailsService]
+}
+
+package "com.piggymetrics.account.domain" {
+  [User]
+  [Account]
+  [Item]
+  [Saving]
+}
+
+package "com.piggymetrics.account.service" {
+  [AccountServiceImpl]
+}
+
+package "com.piggymetrics.account.service.security" {
+  [CustomUserInfoTokenServices]
+}
+
+package "com.piggymetrics.account.controller" {
+  [AccountController]
+  [ErrorHandler]
+}
+
+package "com.piggymetrics.account.client" {
+  [StatisticsServiceClientFallback]
+}
+
+package "com.piggymetrics.account" {
+  [AccountApplication]
+}
+
+package "com.piggymetrics.statistics.service" {
+  [ExchangeRatesServiceImpl]
+  [StatisticsServiceImpl]
+}
+
+package "com.piggymetrics.statistics.service.security" {
+  [CustomUserInfoTokenServices]
+}
+
+package "com.piggymetrics.statistics.client" {
+  [ExchangeRatesClientFallback]
+}
+
+package "com.piggymetrics.statistics.controller" {
+  [StatisticsController]
+}
+
+package "com.piggymetrics.statistics.config" {
+  [ResourceServerConfig]
+}
+
+package "com.piggymetrics.statistics" {
+  [StatisticsApplication]
+}
+
+package "com.piggymetrics.statistics.domain.timeseries" {
+  [DataPoint]
+  [DataPointId]
+  [ItemMetric]
+}
+
+package "com.piggymetrics.statistics.repository.converter" {
+  [DataPointIdReaderConverter]
+  [DataPointIdWriterConverter]
+}
+
+package "com.piggymetrics.notification.domain" {
+  [Recipient]
+  [NotificationSettings]
+}
+
+package "com.piggymetrics.notification.service" {
+  [EmailServiceImpl]
+  [NotificationServiceImpl]
+  [RecipientServiceImpl]
+}
+
+package "com.piggymetrics.notification.controller" {
+  [RecipientController]
+}
+
+package "com.piggymetrics.notification.repository.converter" {
+  [FrequencyReaderConverter]
+  [FrequencyWriterConverter]
+}
+
+package "com.piggymetrics.notification.config" {
+  [ResourceServerConfig]
+}
+
+package "com.piggymetrics.notification" {
+  [NotificationServiceApplication]
+}
+
+package "com.piggymetrics.registry" {
+  [RegistryApplication]
+}
+
+package "com.piggymetrics.turbine" {
+  [TurbineStreamServiceApplication]
+}
+
+package "com.piggymetrics.gateway" {
+  [GatewayApplication]
+}
+
+package "com.piggymetrics.config" {
+  [SecurityConfig]
+  [ConfigApplication]
+}
+
+package "com.piggymetrics.monitoring" {
+  [MonitoringApplication]
+}
+
+[User] ..> [UserDetails]
+[OAuth2AuthorizationConfig] ..|> [AuthorizationServerConfigurerAdapter]
+[ResourceServerConfig] ..|> [ResourceServerConfigurerAdapter]
+[WebSecurityConfig] ..|> [WebSecurityConfigurerAdapter]
+[ResourceServerConfig] ..|> [ResourceServerConfigurerAdapter]
+[CustomUserInfoTokenServices] ..> [ResourceServerTokenServices]
+[ResourceServerConfig] ..|> [ResourceServerConfigurerAdapter]
+[CustomUserInfoTokenServices] ..> [ResourceServerTokenServices]
+[DataPointIdReaderConverter] ..> [Converter<DBObject,DataPointId>]
+[DataPointIdWriterConverter] ..> [Converter<DataPointId,DBObject>]
+[ExchangeRatesClientFallback] ..> [ExchangeRatesClient]
+[StatisticsServiceClientFallback] ..> [StatisticsServiceClient]
+[FrequencyReaderConverter] ..> [Converter<Integer,Frequency>]
+[FrequencyWriterConverter] ..> [Converter<Frequency,Integer>]
+[AccountServiceImpl] ..> [AccountService]
+[NotificationServiceImpl] ..> [NotificationService]
+[RecipientServiceImpl] ..> [RecipientService]
+[UserServiceImpl] ..> [UserService]
+[EmailServiceImpl] ..> [EmailService]
+[MongoUserDetailsService] ..> [UserDetailsService]
+[StatisticsServiceImpl] ..> [StatisticsService]
+[DataPointId] ..> [Serializable]
+@endumlPrompt:You are going to pretend to be a software architect who’s job is to reverse engineer projects in order to create diagrams of the software architecture. Don’t pay too much attention to implementation details but try to model the most important components. 
+
+Steps to Create a Component Diagram
+Identify Components:
+
+Group related classes into logical components. For example, classes related to customer management can be part of a CustomerService component.
+
+Define Interfaces:
+Identify the methods that act as interfaces for each component. These are the methods that other components will interact with.
+
+Determine Dependencies:
+Analyze the imports section and fields to identify dependencies between components. 
+
+Organize Components:
+Organize these components logically in the diagram, showing how they interact with each other using arrows to represent dependencies. Dont show methods in the diagram.
+
+Can you generate a component diagram using the following information including class descriptions (imports, extends, implements, package, methods, parameters) based on a spring boot project. 	The sourcecode information is structured like this:
+Class:<Classname>
+implements:<Classnames>
+extends:<Classnames>
+Package:<Packagepath>
+imports:<Imports>
+Modifiers:<public/private/protected>
+Field:<Fieldname: Type>
+…
+Method:<Method(parameters): Returntype> 
+Only return the plant uml information without using additional descriptions.
