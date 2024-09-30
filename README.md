@@ -22,6 +22,10 @@ Before you begin setting up the project, please ensure you complete the followin
    - Open Eclipse and navigate to `Help` > `Eclipse Marketplace...`.
    - Click on `Install New Software...` and enter the following update site URL: [Palladio Reverse Engineering Retriever Update Site](https://updatesite.palladio-simulator.com/palladio-reverseengineering-retriever-updatesite/nightly/).
    - Follow the prompts to complete the installation of the necessary plugins.
+  
+5. **Project configuration**
+   - It is also important to add the projects that are supposed to be analysed to the [data](data/) folder
+   - ![Example configuration](pictures/example.uml)
 
 ---
 
