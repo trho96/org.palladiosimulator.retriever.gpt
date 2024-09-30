@@ -53,8 +53,8 @@ Some example results can be found in different locations:
    - Past executions of the programm, including the full prompt and the resulting PlantUml description in [logfolder](data/results/)
 
 2. **GPT generated UML as png**
-   - [PiggyMetricsUML](umls/PiggyMetricsGPTuml.png)
-   - [AcmeAirUML](umls/AcmeAirGPTuml.png)
+   - ![PiggyMetricsUML](umls/PiggyMetricsGPTuml.png)
+   - ![AcmeAirUML](umls/AcmeAirGPTuml.png)
   
 ---
 
@@ -117,6 +117,12 @@ Prompt engineering is a key aspect of this project, as the quality of the output
 Source: [A Prompt Pattern Catalog to Enhance Prompt Engineering with ChatGPT](https://arxiv.org/abs/2305.01618)
 
 The usage of these patterns enables a more systematic approach to generating accurate and relevant diagrams that align with the extracted features from the source code.
+
+---
+
+### Slides
+
+The slides can be found at [Slides](presentation/Modellierung%20GPT.pdf)
 
 ---
 
